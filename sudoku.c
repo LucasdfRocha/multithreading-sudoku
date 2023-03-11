@@ -7,12 +7,7 @@
 
 
 int verifySubGrade(int subLin, int subCol, int matriz[][subCol]){
-
-
-
-
-
-
+    
 }
 int verifyColunas(int lin, int col, int matriz[][col]){
 
@@ -144,26 +139,15 @@ int main(int argc, char **argv) {
 
         }
 }   
-    //                                                                    //!TRANSFORMANDO PARA INT QUE NEM A FUNCAO LA EM CIMA
-   
-    // if (fgetc(fp) != EOF) {
-    //     printf("File out of format.\n");
-    //     return 0;
-    // }
-
-    
-    
+ 
     // if(verifyColunas(linhas,colunas,matriz) == 1|| verifyLinha(linhas,colunas,matriz) == 1){
 
     //     printf("nao é");
     //     return 0;
     // }
     // printf("e\n");
-    printMatriz(linhas,colunas,matriz);
+    // printMatriz(linhas,colunas,matriz);
      
-															        //printf("Sudoku: %d x %d\n", linhas, colunas);
-																	//printf("sub: %d x %d\n", SubLinhas, SubColunas);
-
     fclose(fp);
     return 0;
 }
