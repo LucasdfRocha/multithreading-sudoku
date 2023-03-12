@@ -138,8 +138,15 @@ int main(int argc, char **argv) {
             qntValores++;
 
         }
-}   
- 
+
+        
+    }   
+    if(fgetc(fp) != EOF){
+
+        printf("File out of format\n");
+        return 0;
+    }
+
     // if(verifyColunas(linhas,colunas,matriz) == 1|| verifyLinha(linhas,colunas,matriz) == 1){
 
     //     printf("nao é");
