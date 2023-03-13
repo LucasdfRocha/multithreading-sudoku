@@ -6,10 +6,34 @@
 #define BUFSIZE 1000
 
 
-int verifySubGrade(int subLin, int subCol, int matriz[][subCol]){
+int verifySubGrade(int col,int lin,int subLin, int subCol, int matriz[][col]){
+    
+    int igual = 0;
+    
+    for (int i = 0; i < lin; i += subLin) {
+        for (int j = 0; j < col; j += subCol) {
+            for (int k = i; k < i + subLin; k++) {
+                for (int l = j; l < j + subCol; l++) {
+                    for (int m = i; m < i + subLin; m++) {
+                        for (int o = j; o < j + subCol; o++) {
+                            if (k != m || l != o) {
+                                if (matriz[k][l] == matriz[m][o]) {
+                                    igual = 1;
+                                    break;
+                                }
+                            }
+                        }    
+                    }    
+                }     
+            }     
+        }
+    }
+    
+    return igual;
+
     
 }
-int verifyColunas(int lin, int col, int matriz[][col]){
+int verifyLinha(int lin, int col, int matriz[][col]){
 
     int temp;
     int igual = 0;
@@ -28,7 +52,7 @@ int verifyColunas(int lin, int col, int matriz[][col]){
     }
     return igual;
 }
-int verifyLinha(int lin, int col, int matriz[][col]){
+int verifyColuna(int lin, int col, int matriz[][col]){
 
 
 
@@ -134,6 +158,11 @@ int main(int argc, char **argv) {
                 printf("File out of format.\n");
                 return 0;
             }
+            if (valor > colunas || valor <= 0){
+                
+                printf("File out of format\n");
+                return 0;
+            }
             matriz[i][j] = valor;
             qntValores++;
 
@@ -147,13 +176,13 @@ int main(int argc, char **argv) {
         return 0;
     }
 
-    // if(verifyColunas(linhas,colunas,matriz) == 1|| verifyLinha(linhas,colunas,matriz) == 1){
+    if(verifyColuna(linhas,colunas,matriz) == 1|| verifyLinha(linhas,colunas,matriz) == 1 || verifySubGrade(colunas,linhas,SubLinhas,SubColunas,matriz) == 1){
 
-    //     printf("nao é");
-    //     return 0;
-    // }
-    // printf("e\n");
-    // printMatriz(linhas,colunas,matriz);
+        //printMatriz(linhas,colunas,matriz);
+        printf("nao é\n");
+        return 0;
+    }
+    printf("e\n");
      
     fclose(fp);
     return 0;
