@@ -6,9 +6,9 @@
 #define BUFSIZE 1000
 
 
-int verifySubGrade(int col,int lin,int subLin, int subCol, int matriz[][col]){
+void *verifySubGrade(int *igual,int col,int lin,int subLin, int subCol, int matriz[][col]){
     
-    int igual = 0;
+    
     
     for (int i = 0; i < lin; i += subLin) {
         for (int j = 0; j < col; j += subCol) {
@@ -18,7 +18,7 @@ int verifySubGrade(int col,int lin,int subLin, int subCol, int matriz[][col]){
                         for (int o = j; o < j + subCol; o++) {
                             if (k != m || l != o) {
                                 if (matriz[k][l] == matriz[m][o]) {
-                                    igual = 1;
+                                    *igual = 1;
                                     break;
                                 }
                             }
@@ -29,20 +29,20 @@ int verifySubGrade(int col,int lin,int subLin, int subCol, int matriz[][col]){
         }
     }
     
-    return igual;
+    return NULL;
 
     
 }
-int verifyLinha(int lin, int col, int matriz[][col]){
+void *verifyLinha(int *igual2,int lin, int col, int matriz[][col]){
 
     int temp;
-    int igual = 0;
+   
 
     for (int i = 0; i < lin; i++){
         for (int j = 1; j < col; j++){       
             for(int pos = j + 1; pos < col; pos++){
                 if(matriz[i][j] == matriz[i][pos]){
-                    igual = 1;
+                    *igual2 = 1;
                     break;
                 
                 }
@@ -50,20 +50,20 @@ int verifyLinha(int lin, int col, int matriz[][col]){
         }
         
     }
-    return igual;
+    return NULL;
 }
-int verifyColuna(int lin, int col, int matriz[][col]){
+void *verifyColuna(int *igual3,int lin, int col, int matriz[][col]){
 
 
 
     int temp;
-    int igual = 0;
+    
 
     for (int i = 0; i < lin; i++){
         for (int j = 1; j < col; j++){       
             for(int pos = i + 1; pos < lin; pos++){
                 if(matriz[i][j] == matriz[pos][j]){
-                    igual = 1;
+                    *igual3 = 1;
                     break;
                 
                 }
@@ -71,8 +71,8 @@ int verifyColuna(int lin, int col, int matriz[][col]){
         }
         
     }
-    return igual;
-    return igual;
+    return NULL;
+    
 }
 void printMatriz(int lin, int col, int matriz[][col]){
 
@@ -103,6 +103,10 @@ int ApenasInt(char **ptr) {
 }
 
 int main(int argc, char **argv) {
+
+    int igual = 0;
+    int igual2 = 0;
+    int igual3 = 0;
     FILE *fp;
     char line[BUFSIZE],line2[BUFSIZE];
     int linhas, colunas,SubLinhas,SubColunas;
@@ -175,14 +179,12 @@ int main(int argc, char **argv) {
         printf("File out of format\n");
         return 0;
     }
+    verifyColuna(&igual,linhas,colunas,matriz);
+    verifyLinha(&igual2,linhas,colunas,matriz);
+    verifySubGrade(&igual3,colunas,linhas,SubLinhas,SubColunas,matriz);
 
-    if(verifyColuna(linhas,colunas,matriz) == 1|| verifyLinha(linhas,colunas,matriz) == 1 || verifySubGrade(colunas,linhas,SubLinhas,SubColunas,matriz) == 1){
-
-        //printMatriz(linhas,colunas,matriz);
-        printf("nao é\n");
-        return 0;
-    }
-    printf("e\n");
+    printf("%d %d %d\n",igual,igual2,igual3);
+    //printf("e\n");
      
     fclose(fp);
     return 0;
