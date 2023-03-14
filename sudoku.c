@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <string.h>
+#include <pthread.h>
 
 #define BUFSIZE 1000
 
@@ -39,7 +40,6 @@ void *verifySubGrade(void *matriz){
             }     
         }
     }
-    
     return NULL;
 
     
@@ -104,12 +104,8 @@ void printMatriz(void *matriz){
         }
         printf("\n");
     }
-    
-
-
 
 }
-
 int ApenasInt(char **ptr) {
     char *string = *ptr;
     int valor = 0;
@@ -206,7 +202,13 @@ int main(int argc, char **argv) {
     verifyColuna(&ds);
     verifySubGrade(&ds);
 
-    printf("%d %d %d\n",igual,igual2,igual3);
+    if(igual == 1 || igual2 == 1 || igual3 == 1){
+        printf("FAIL\n");
+        return 0;
+
+    }
+    printf("SUCCESS\n");
+    //printf("%d %d %d\n",igual,igual2,igual3);
     //printf("e\n");
     //printMatriz(&ds);
 
