@@ -5,20 +5,31 @@
 
 #define BUFSIZE 1000
 
+int igual,igual2,igual3;
 
-void *verifySubGrade(int *igual,int col,int lin,int subLin, int subCol, int matriz[][col]){
+typedef struct 
+{
+   int linha;
+   int sublinha;
+   int coluna;
+   int subcoluna;
+   int **matriz;
+} datastruct;
+
+void *verifySubGrade(void *matriz){
     
+    datastruct * ds;
+    ds = (datastruct *) matriz;
     
-    
-    for (int i = 0; i < lin; i += subLin) {
-        for (int j = 0; j < col; j += subCol) {
-            for (int k = i; k < i + subLin; k++) {
-                for (int l = j; l < j + subCol; l++) {
-                    for (int m = i; m < i + subLin; m++) {
-                        for (int o = j; o < j + subCol; o++) {
+    for (int i = 0; i < ds->linha; i += ds->sublinha) {
+        for (int j = 0; j < ds->coluna; j += ds->subcoluna) {
+            for (int k = i; k < i + ds->sublinha; k++) {
+                for (int l = j; l < j + ds->subcoluna; l++) {
+                    for (int m = i; m < i + ds->sublinha; m++) {
+                        for (int o = j; o < j + ds->subcoluna; o++) {
                             if (k != m || l != o) {
-                                if (matriz[k][l] == matriz[m][o]) {
-                                    *igual = 1;
+                                if (ds->matriz[k][l] == ds->matriz[m][o]) {
+                                    igual = 1;
                                     break;
                                 }
                             }
@@ -33,16 +44,19 @@ void *verifySubGrade(int *igual,int col,int lin,int subLin, int subCol, int matr
 
     
 }
-void *verifyLinha(int *igual2,int lin, int col, int matriz[][col]){
+void *verifyLinha(void *matriz){
 
     int temp;
+    datastruct * ds;
+    ds = (datastruct *) matriz;
+
    
 
-    for (int i = 0; i < lin; i++){
-        for (int j = 1; j < col; j++){       
-            for(int pos = j + 1; pos < col; pos++){
-                if(matriz[i][j] == matriz[i][pos]){
-                    *igual2 = 1;
+    for (int i = 0; i < ds->linha; i++){
+        for (int j = 1; j < ds->coluna; j++){       
+            for(int pos = j + 1; pos < ds->coluna; pos++){
+                if(ds->matriz[i][j] == ds->matriz[i][pos]){
+                    igual2 = 1;
                     break;
                 
                 }
@@ -52,18 +66,20 @@ void *verifyLinha(int *igual2,int lin, int col, int matriz[][col]){
     }
     return NULL;
 }
-void *verifyColuna(int *igual3,int lin, int col, int matriz[][col]){
+void *verifyColuna(void *matriz){
 
 
 
     int temp;
+    datastruct * ds;
+    ds = (datastruct *) matriz;
     
 
-    for (int i = 0; i < lin; i++){
-        for (int j = 1; j < col; j++){       
-            for(int pos = i + 1; pos < lin; pos++){
-                if(matriz[i][j] == matriz[pos][j]){
-                    *igual3 = 1;
+    for (int i = 0; i < ds->linha; i++){
+        for (int j = 1; j < ds->coluna; j++){       
+            for(int pos = i + 1; pos < ds->coluna; pos++){
+                if(ds->matriz[i][j] == ds->matriz[pos][j]){
+                    igual3 = 1;
                     break;
                 
                 }
@@ -74,14 +90,17 @@ void *verifyColuna(int *igual3,int lin, int col, int matriz[][col]){
     return NULL;
     
 }
-void printMatriz(int lin, int col, int matriz[][col]){
+void printMatriz(void *matriz){
 
+    int temp;
+    datastruct * ds;
+    ds = (datastruct *) matriz;
 
-    for (int i = 0; i < lin; i++)
+    for (int i = 0; i < ds->linha; i++)
     {
-        for (int j = 0; j < col; j++)
+        for (int j = 0; j < ds->coluna; j++)
         {
-            printf("%d ",matriz[i][j]);
+            printf("%d ",ds->matriz[i][j]);
         }
         printf("\n");
     }
@@ -104,9 +123,9 @@ int ApenasInt(char **ptr) {
 
 int main(int argc, char **argv) {
 
-    int igual = 0;
-    int igual2 = 0;
-    int igual3 = 0;
+    igual = 0;
+    igual2 = 0;
+    igual3 = 0;
     FILE *fp;
     char line[BUFSIZE],line2[BUFSIZE];
     int linhas, colunas,SubLinhas,SubColunas;
@@ -153,21 +172,25 @@ int main(int argc, char **argv) {
             return 0;
     }
 
-    int matriz[linhas][colunas],qntValores = 0;
+    int qntValores = 0;
+
+    datastruct ds = {linhas,SubLinhas,colunas,SubColunas,malloc(sizeof *ds.matriz * ds.linha)};
     
     int valor,i,j;
-    for(int i = 0; i < linhas; i++){
-        for(int j = 0; j < colunas; j++){
+    for(size_t i = 0; i < ds.linha; i++){
+        ds.matriz[i] = malloc(sizeof * ds.matriz[i] * ds.coluna);
+
+        for(size_t j = 0; j < ds.coluna; j++){
             if(fscanf(fp, "%d",&valor) == EOF){
                 printf("File out of format.\n");
                 return 0;
             }
-            if (valor > colunas || valor <= 0){
+            if (valor > ds.coluna || valor <= 0){
                 
                 printf("File out of format\n");
                 return 0;
             }
-            matriz[i][j] = valor;
+            ds.matriz[i][j] = valor;
             qntValores++;
 
         }
@@ -179,13 +202,18 @@ int main(int argc, char **argv) {
         printf("File out of format\n");
         return 0;
     }
-    verifyColuna(&igual,linhas,colunas,matriz);
-    verifyLinha(&igual2,linhas,colunas,matriz);
-    verifySubGrade(&igual3,colunas,linhas,SubLinhas,SubColunas,matriz);
+    verifyColuna(&ds);
+    verifyColuna(&ds);
+    verifySubGrade(&ds);
 
     printf("%d %d %d\n",igual,igual2,igual3);
     //printf("e\n");
-     
+    //printMatriz(&ds);
+
+    for (size_t i = 0; i < ds.linha; i++) {
+        free(ds.matriz[i]);
+    }
+    free(ds.matriz);
     fclose(fp);
     return 0;
 }
