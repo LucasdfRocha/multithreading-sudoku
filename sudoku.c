@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <ctype.h>
 #include <string.h>
+#include<ctype.h>
 #include <pthread.h>
 
 #define BUFSIZE 1000
@@ -46,7 +46,6 @@ void *verifySubGrade(void *matriz){
 }
 void *verifyLinha(void *matriz){
 
-    int temp;
     datastruct * ds;
     ds = (datastruct *) matriz;
 
@@ -69,8 +68,6 @@ void *verifyLinha(void *matriz){
 void *verifyColuna(void *matriz){
 
 
-
-    int temp;
     datastruct * ds;
     ds = (datastruct *) matriz;
     
@@ -92,7 +89,6 @@ void *verifyColuna(void *matriz){
 }
 void printMatriz(void *matriz){
 
-    int temp;
     datastruct * ds;
     ds = (datastruct *) matriz;
 
@@ -122,7 +118,7 @@ int main(int argc, char **argv) {
     igual = 0;
     igual2 = 0;
     igual3 = 0;
-    FILE *fp;
+    FILE *fp,*fp2;
     char line[BUFSIZE],line2[BUFSIZE];
     int linhas, colunas,SubLinhas,SubColunas;
 
@@ -131,7 +127,6 @@ int main(int argc, char **argv) {
         return 0;
     }
 
-    char buff[BUFSIZE];
     fp = fopen(argv[1], "r");
 
     if (fp == NULL) {
@@ -172,11 +167,11 @@ int main(int argc, char **argv) {
 
     datastruct ds = {linhas,SubLinhas,colunas,SubColunas,malloc(sizeof *ds.matriz * ds.linha)};
     
-    int valor,i,j;
-    for(size_t i = 0; i < ds.linha; i++){
+    int valor;
+    for(int i = 0; i < ds.linha; i++){
         ds.matriz[i] = malloc(sizeof * ds.matriz[i] * ds.coluna);
 
-        for(size_t j = 0; j < ds.coluna; j++){
+        for(int j = 0; j < ds.coluna; j++){
             if(fscanf(fp, "%d",&valor) == EOF){
                 printf("File out of format.\n");
                 return 0;
@@ -201,7 +196,6 @@ int main(int argc, char **argv) {
 
     int amount = 0;
     int tamanho = linhas;
-    int sizeGrid = (linhas*colunas)/(SubLinhas*SubColunas);
     pthread_t *threads = malloc(tamanho * sizeof(pthread_t));
 
     for(int i = 0; i < tamanho; i++){
@@ -213,26 +207,28 @@ int main(int argc, char **argv) {
         amount += 3;
     }   
 
-    for (i = 0; i < linhas; i++) { 
+    for (int i = 0; i < linhas; i++) { 
         pthread_join(threads[i], NULL);
     }
 
+    fp2 = fopen("sudoku_ldfr.out","w");
+
     if(igual == 1 || igual2 == 1 || igual3 == 1){
-        printf("FAIL\n");
+        fprintf(fp2, "FAIL");
         printf("\n%d\n", amount);
         return 0;
 
     }
-    printf("SUCCESS\n");
+    fprintf(fp2, "SUCCESS");
 
     //printMatriz(&ds);
 
-    for (size_t i = 0; i < ds.linha; i++) {
+    for (int i = 0; i < ds.linha; i++) {
         free(ds.matriz[i]);
     }
     free(ds.matriz);
 
-
+    fclose(fp2);
     fclose(fp);
     return 0;
 }

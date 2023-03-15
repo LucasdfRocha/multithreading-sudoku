@@ -1,4 +1,0 @@
-perguntar em relacao a ideia da necessidade as 3 funcoes
-vai testar com 0?
-perguntar sobre os testes feitos em relacao a matriz.
-como é possivel saber quantas threads estao sendo utilizadas?
