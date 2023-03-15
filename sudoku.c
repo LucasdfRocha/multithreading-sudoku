@@ -3,6 +3,7 @@
 #include <string.h>
 #include<ctype.h>
 #include <pthread.h>
+#include <stdbool.h>
 
 #define BUFSIZE 1000
 
@@ -21,27 +22,26 @@ void *verifySubGrade(void *matriz){
     
     datastruct * ds;
     ds = (datastruct *) matriz;
-    
+
+    int verificaIgual[ds->linha + 1];
     for (int i = 0; i < ds->linha; i += ds->sublinha) {
         for (int j = 0; j < ds->coluna; j += ds->subcoluna) {
-            for (int k = i; k < i + ds->sublinha; k++) {
-                for (int l = j; l < j + ds->subcoluna; l++) {
-                    for (int m = i; m < i + ds->sublinha; m++) {
-                        for (int o = j; o < j + ds->subcoluna; o++) {
-                            if (k != m || l != o) {
-                                if (ds->matriz[k][l] == ds->matriz[m][o]) {
-                                    igual = 1;
-                                    break;
-                                }
-                            }
-                        }    
-                    }    
-                }     
-            }     
+            
+            memset(verificaIgual,0,sizeof(verificaIgual));
+            
+            for (int k = i; k < i+ds->sublinha; k++) {
+                for (int l = j; l < j+ds->subcoluna; l++) {
+                    
+                    int temp = ds->matriz[k][l];
+                    if (verificaIgual[temp]) 
+                        igual = 1;
+                    
+                    verificaIgual[temp] = 1;
+                }
+            }
         }
-    }
-    return NULL;
-
+        return NULL;
+}
     
 }
 void *verifyLinha(void *matriz){
