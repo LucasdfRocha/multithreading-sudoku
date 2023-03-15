@@ -17,11 +17,6 @@ typedef struct
    int **matriz;
 } datastruct;
 
-typedef struct {   
-    pthread_t thread_id;       
-    int thread_num;   
-} ThreadData;
-
 void *verifySubGrade(void *matriz){
     
     datastruct * ds;
@@ -203,51 +198,41 @@ int main(int argc, char **argv) {
         printf("File out of format\n");
         return 0;
     }
+
+    int amount = 0;
+    int tamanho = linhas;
     int sizeGrid = (linhas*colunas)/(SubLinhas*SubColunas);
-    ThreadData *threadLinhas = malloc(ds.linha * sizeof(ThreadData));
-    ThreadData *threadColunas = malloc(ds.coluna * sizeof(ThreadData)); //!VERIFICAR CORE DUMPED MESMO O CODIGO RODANDO
-    ThreadData *threadGrades = malloc(sizeGrid * sizeof(ThreadData)); 
+    pthread_t *threads = malloc(tamanho * sizeof(pthread_t));
 
-    for(int i = 0; i < linhas; i++){
-        threadLinhas[i].thread_num = i;
-        pthread_create(&(threadLinhas[i].thread_id),NULL,(void *) verifyLinha,(void *) &ds);
-        pthread_create(&(threadColunas[i].thread_id),NULL,(void *) verifyColuna,(void *) &ds);
+    for(int i = 0; i < tamanho; i++){
+        
+        pthread_create(&(threads[i]),NULL,(void *) verifyLinha,(void *) &ds);
+        pthread_create(&(threads[i]),NULL,(void *) verifyColuna,(void *) &ds);
+        pthread_create(&(threads[i]), NULL, (void *) verifySubGrade, (void *) &ds);
+
+        amount += 3;
+    }   
+
+    for (i = 0; i < linhas; i++) { 
+        pthread_join(threads[i], NULL);
     }
-    int sizeofGrade = (linhas*colunas)/(SubLinhas*SubColunas);
 
-    for(int i = 0; i < sizeofGrade; i++){
-        threadGrades[i].thread_num = i;
-        pthread_create(&(threadGrades[i].thread_id),NULL,(void *) verifySubGrade,(void *) &ds);
+    if(igual == 1 || igual2 == 1 || igual3 == 1){
+        printf("FAIL\n");
+        printf("\n%d\n", amount);
+        return 0;
+
     }
+    printf("SUCCESS\n");
 
-
-    // if(igual == 1||igual2 == 1 || igual3 == 1)
-    //     printf("teste\n");
-    
-    // verifyColuna(&ds);
-    // verifyColuna(&ds);
-    // verifySubGrade(&ds);
-
-    // if(igual == 1 || igual2 == 1 || igual3 == 1){
-    //     printf("FAIL\n");
-    //     return 0;
-
-    // }
-    // printf("SUCCESS\n");
-
-
-    
-    printf("%d %d %d\n",igual,igual2,igual3);
-    //printf("e\n");
     //printMatriz(&ds);
 
     for (size_t i = 0; i < ds.linha; i++) {
         free(ds.matriz[i]);
     }
     free(ds.matriz);
-    free(threadLinhas);
-    free(threadColunas);
-    free(threadGrades);
+
+
     fclose(fp);
     return 0;
 }
