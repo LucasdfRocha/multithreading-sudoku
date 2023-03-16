@@ -194,7 +194,6 @@ int main(int argc, char **argv) {
         return 0;
     }
 
-    int amount = 0;
     int tamanho = linhas;
     pthread_t *threads = malloc(tamanho * sizeof(pthread_t));
 
@@ -204,7 +203,6 @@ int main(int argc, char **argv) {
         pthread_create(&(threads[i]),NULL,(void *) verifyColuna,(void *) &ds);
         pthread_create(&(threads[i]), NULL, (void *) verifySubGrade, (void *) &ds);
 
-        amount += 3;
     }   
 
     for (int i = 0; i < linhas; i++) { 
@@ -215,7 +213,6 @@ int main(int argc, char **argv) {
 
     if(igual == 1 || igual2 == 1 || igual3 == 1){
         fprintf(fp2, "FAIL");
-        printf("\n%d\n", amount);
         return 0;
 
     }
