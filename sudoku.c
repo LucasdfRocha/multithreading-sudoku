@@ -16,6 +16,12 @@ typedef struct
    int coluna;
    int subcoluna;
    int **matriz;
+   int startLinha;
+   int endLinha;
+   int startColuna;
+   int endColuna;
+   int startSubGrade;
+   int endSubGrade;
 } datastruct;
 
 void *verifySubGrade(void *matriz){
@@ -135,8 +141,11 @@ int main(int argc, char **argv) {
     }
 
     																			// PEGANDO A PRIMEIRA LINHA E ANALISANDO OS TAMANHOS DO SUDOKU
-    fgets(line, BUFSIZE, fp);
-
+    if(fgets(line, BUFSIZE, fp) == NULL){
+        printf("File out of Format\n");
+        return 0;
+    }
+    
     char *ptr = line;
     linhas = ApenasInt(&ptr);
     while (*ptr && !isdigit(*ptr)) 
@@ -144,12 +153,15 @@ int main(int argc, char **argv) {
     colunas = ApenasInt(&ptr);
 
     if (colunas != linhas){
-            printf("coluna e linha\n");
+            printf("File out of Format\n");
             return 0;
     }
 
     																			//PEGA LINHA E COLUNA DA SUBGRADE
-    fgets(line2, BUFSIZE, fp);
+    if(fgets(line2, BUFSIZE, fp) == NULL){
+        printf("File out of Format\n");
+        return 0;
+    }
 
     char *ptr2 = line2;
     SubLinhas = ApenasInt(&ptr2);
@@ -159,7 +171,7 @@ int main(int argc, char **argv) {
 
 
     if (SubColunas * SubLinhas != colunas){
-            printf("subcoluna\n");
+            printf("File out of Format\n");
             return 0;
     }
 
@@ -194,19 +206,67 @@ int main(int argc, char **argv) {
         return 0;
     }
 
-    int tamanho = linhas;
-    pthread_t *threads = malloc(tamanho * sizeof(pthread_t));
-
-    for(int i = 0; i < tamanho; i++){
+    int tamanho = linhas/4;
+    int qnt = 0;
+    pthread_t *threads = malloc(12 * sizeof(pthread_t));
+    for (int i = 0; i < 4; i++) {
+        datastruct *ds_thread = malloc(sizeof(datastruct));
+        ds_thread->linha = linhas;
+        ds_thread->coluna = colunas;
+        ds_thread->sublinha = SubLinhas;
+        ds_thread->subcoluna = SubColunas;
+        ds_thread->matriz = ds.matriz;
         
-        pthread_create(&(threads[i]),NULL,(void *) verifyLinha,(void *) &ds);
-        pthread_create(&(threads[i]),NULL,(void *) verifyColuna,(void *) &ds);
-        pthread_create(&(threads[i]), NULL, (void *) verifySubGrade, (void *) &ds);
+        if (i < 3) {
+            ds_thread->startLinha = i * tamanho;
+            ds_thread->endLinha = ds_thread->startLinha + tamanho;
+        } else {
+            ds_thread->startLinha = i * tamanho;
+            ds_thread->endLinha = ds.linha;
+        }
 
+        pthread_create(&(threads[i]), NULL, (void *) verifyLinha, (void *) ds_thread);
+        qnt++;
+
+        ds_thread = malloc(sizeof(datastruct));
+        ds_thread->linha = linhas;
+        ds_thread->coluna = colunas;
+        ds_thread->sublinha = SubLinhas;
+        ds_thread->subcoluna = SubColunas;
+        ds_thread->matriz = ds.matriz;
+
+        if (i < 3) {
+            ds_thread->startColuna = i * tamanho;
+            ds_thread->endColuna = ds_thread->startColuna + tamanho;
+        } else {
+            ds_thread->startColuna = i * tamanho;
+            ds_thread->endColuna = ds.coluna;
+        }
+
+        pthread_create(&(threads[4 + i]), NULL, (void *) verifyColuna, (void *) ds_thread);
+        qnt++;
+
+        ds_thread = malloc(sizeof(datastruct));
+        ds_thread->linha = linhas;
+        ds_thread->coluna = colunas;
+        ds_thread->sublinha = SubLinhas;
+        ds_thread->subcoluna = SubColunas;
+        ds_thread->matriz = ds.matriz;
+
+        if (i < 3) {
+            ds_thread->startSubGrade = i * tamanho;
+            ds_thread->endSubGrade = ds_thread->startSubGrade + tamanho;
+        } else {
+            ds_thread->startSubGrade = i * tamanho;
+            ds_thread->endSubGrade = ds.linha;
+        }
+
+        pthread_create(&(threads[8 + i]), NULL, (void *) verifySubGrade, (void *) ds_thread);
+        qnt++;
     }   
 
-    for (int i = 0; i < linhas; i++) { 
-        pthread_join(threads[i], NULL);
+    for (int i = 0; i < 12; i++) { 
+        pthread_join(threads[i], NULL);  
     }
 
     fp2 = fopen("sudoku_ldfr.out","w");
@@ -217,9 +277,10 @@ int main(int argc, char **argv) {
 
     }
     fprintf(fp2, "SUCCESS");
+    
 
     //printMatriz(&ds);
-
+    
     for (int i = 0; i < ds.linha; i++) {
         free(ds.matriz[i]);
     }
