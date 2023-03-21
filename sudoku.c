@@ -129,20 +129,20 @@ int main(int argc, char **argv) {
     int linhas, colunas,SubLinhas,SubColunas;
 
     if (argc != 2) {
-        printf("Invalid number of parameters\n");
+        printf("Invalid number of parameters");
         return 0;
     }
 
     fp = fopen(argv[1], "r");
 
     if (fp == NULL) {
-        printf("Error to read file\n");
+        printf("Error to read file");
         return 0;
     }
 
     																			// PEGANDO A PRIMEIRA LINHA E ANALISANDO OS TAMANHOS DO SUDOKU
     if(fgets(line, BUFSIZE, fp) == NULL){
-        printf("File out of Format\n");
+        printf("File out of format");
         return 0;
     }
     
@@ -153,13 +153,13 @@ int main(int argc, char **argv) {
     colunas = ApenasInt(&ptr);
 
     if (colunas != linhas){
-            printf("File out of Format\n");
+            printf("File out of format");
             return 0;
     }
 
     																			//PEGA LINHA E COLUNA DA SUBGRADE
     if(fgets(line2, BUFSIZE, fp) == NULL){
-        printf("File out of Format\n");
+        printf("File out of format");
         return 0;
     }
 
@@ -171,7 +171,7 @@ int main(int argc, char **argv) {
 
 
     if (SubColunas * SubLinhas != colunas){
-            printf("File out of Format\n");
+            printf("File out of format");
             return 0;
     }
 
@@ -185,12 +185,12 @@ int main(int argc, char **argv) {
 
         for(int j = 0; j < ds.coluna; j++){
             if(fscanf(fp, "%d",&valor) == EOF){
-                printf("File out of format.\n");
+                printf("File out of format");
                 return 0;
             }
             if (valor > ds.coluna || valor <= 0){
                 
-                printf("File out of format\n");
+                printf("File out of format");
                 return 0;
             }
             ds.matriz[i][j] = valor;
@@ -202,7 +202,7 @@ int main(int argc, char **argv) {
     }   
     if(fgetc(fp) != EOF){
 
-        printf("File out of format\n");
+        printf("File out of format");
         return 0;
     }
 
