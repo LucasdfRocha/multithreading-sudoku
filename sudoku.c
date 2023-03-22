@@ -179,7 +179,9 @@ int main(int argc, char **argv) {
 
     datastruct ds = {linhas,SubLinhas,colunas,SubColunas,malloc(sizeof *ds.matriz * ds.linha)};
     
+
     int valor;
+
     for(int i = 0; i < ds.linha; i++){
         ds.matriz[i] = malloc(sizeof * ds.matriz[i] * ds.coluna);
 
@@ -192,13 +194,11 @@ int main(int argc, char **argv) {
                 
                 printf("File out of format");
                 return 0;
-            }
+            }       
             ds.matriz[i][j] = valor;
             qntValores++;
 
         }
-
-        
     }   
     if(fgetc(fp) != EOF){
 
